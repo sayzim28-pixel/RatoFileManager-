@@ -29,7 +29,7 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
     private func setupUI() {
         view.backgroundColor = deepBlack
         title = "86 RATO - FILE MANAGER"
-        titleTextColor = neonGreen
+        navigationController?.navigationBar.titleTextAttributes = [.foregroundColor: neonGreen]
         
         // Header/Status View
         let headerView = UIView(frame: CGRect(x: 0, y: 100, width: view.frame.width, height: 60))
@@ -77,7 +77,7 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
 
     @objc func injectTapped() {
         let alert = UIAlertController(title: "COMMAND EXECUTED", message: "Injecting assets into target directory...", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "OK", for: .default, handler: nil))
+        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
         present(alert, animated: true)
         
         statusLabel.text = "STATUS: INJECTING..."
