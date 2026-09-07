@@ -2,7 +2,7 @@ name: Build iOS App (IPA)
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   workflow_dispatch:
 
 jobs:
@@ -11,33 +11,33 @@ jobs:
 
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
+
+      - name: Select Xcode Version
+        run: sudo xcode-select -s /Applications/Xcode_15.0.app
+
+      - name: Install Dependencies
+        run: echo "Installing dependencies..."
 
       - name: Build Project (Archive)
         run: |
           xcodebuild archive \
-            -project RatoFileManager.xcodeproj \
+            -project .github/RatoFileManager/RatoFileManager.xcodeproj \
             -scheme RatoFileManager \
-            -sdk iphoneos \
             -configuration Release \
             -archivePath $PWD/archives/RatoFileManager.xcarchive \
-            CODE_SIGN_IDENTITY="" \
-            CODE_SIGNING_REQUIRED=NO \
-            CODE_SIGNING_ALLOWED=NO \
             SKIP_INSTALL=NO \
             BUILD_LIBRARY_FILES=YES
 
-      - name: Package IPA Manually (No Signing Required)
+      - name: Export IPA
         run: |
-          mkdir -p build/Payload
-          cp -r $PWD/archives/RatoFileManager.xcarchive/Products/Applications/RatoFileManager.app build/Payload/
-          cd build && zip -r RatoFileManager.ipa Payload
+          xcodebuild -exportArchive \
+            -archivePath $PWD/archives/RatoFileManager.xcarchive \
+            -exportOptionsPlist ExportOptions.plist \
+            -exportPath $PWD/build/
 
       - name: Upload IPA Artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v3
         with:
           name: RatoFileManager-IPA
-          path: build/RatoFileManager.ipa
-
-      - name: Cleanup
-        run: echo "Build process finished."
+          path: build/*.ipa
