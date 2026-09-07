@@ -29,19 +29,26 @@ jobs:
             -project "$PROJECT_PATH" \
             -scheme RatoFileManager \
             -configuration Release \
+            -sdk iphoneos \
+            -destination 'generic/platform=iOS' \
             -archivePath $PWD/archives/RatoFileManager.xcarchive \
             SKIP_INSTALL=NO \
-            BUILD_LIBRARY_FILES=YES
+            BUILD_LIBRARY_FILES=YES \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY=""
 
-      - name: Export IPA
+      - name: Package unsigned IPA
         run: |
-          xcodebuild -exportArchive \
-            -archivePath $PWD/archives/RatoFileManager.xcarchive \
-            -exportOptionsPlist ExportOptions.plist \
-            -exportPath $PWD/build/
+          APP_PATH="$(find archives/RatoFileManager.xcarchive/Products/Applications -maxdepth 1 -name '*.app' -print -quit)"
+          test -n "$APP_PATH"
+          mkdir -p build/Payload
+          cp -R "$APP_PATH" build/Payload/
+          cd build
+          zip -qry RatoFileManager-unsigned.ipa Payload
 
       - name: Upload IPA Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: RatoFileManager-IPA
-          path: build/*.ipa
+          name: RatoFileManager-unsigned-IPA
+          path: build/RatoFileManager-unsigned.ipa
