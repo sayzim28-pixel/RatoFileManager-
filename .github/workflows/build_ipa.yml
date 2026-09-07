@@ -1,51 +1,51 @@
 name: Build iOS App (IPA)
 
 on:
-  push:
-    branches: [ main ] # Dispara o build quando você faz push na main
-  workflow_dispatch: # Permite rodar manualmente
+  push:
+    branches: [ main ] # Dispara o build quando você faz push na main
+  workflow_dispatch: # Permite rodar manualmente
 
 jobs:
-  build:
-    runs-on: macos-latest # Usa um Mac virtual do GitHub
+  build:
+    runs-on: macos-latest # Usa um Mac virtual do GitHub
 
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v3
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
 
-      - name: Select Xcode Version
-        run: sudo xcode-select -s /Applications/Xcode_15.0.app # Ajuste para sua versão
+      - name: Select Xcode Version
+        run: sudo xcode-select -s /Applications/Xcode_15.0.app # Ajuste para sua versão
 
-      - name: Install Dependencies
-        run: |
-          # Se usar CocoaPods, descomente a linha abaixo
-          # pod install 
-          echo "Installing dependencies..."
+      - name: Install Dependencies
+        run: |
+          # Se usar CocoaPods, descomente a linha abaixo
+          # pod install 
+          echo "Installing dependencies..."
 
-      - name: Build Project (Archive)
-        run: |
-          xcodebuild archive \
-            -project RatoFileManager.xcodeproj \
-            -scheme RatoFileManager \
-            -configuration Release \
-            -archivePath $PWD/archives/RatoFileManager.xcarchive \
-            SKIP_INSTALL=NO \
-            BUILD_LIBRARY_FILES=YES
+      - name: Build Project (Archive)
+        run: |
+          xcodebuild archive \
+            -project RatoFileManager.xcodeproj \
+            -scheme RatoFileManager \
+            -configuration Release \
+            -archivePath $PWD/archives/RatoFileManager.xcarchive \
+            SKIP_INSTALL=NO \
+            BUILD_LIBRARY_FILES=YES
 
-      - name: Export IPA
-        run: |
-          # Nota: Para gerar IPA real, você precisa de um Provisioning Profile e Certificado
-          # Para um build de teste/simulador, usamos o comando de build direto
-          xcodebuild -exportArchive \
-            -archivePath $PWD/archives/RatoFileManager.xcarchive \
-            -exportOptionsPlist ExportOptions.plist \
-            -exportPath $PWD/build/
+      - name: Export IPA
+        run: |
+          # Nota: Para gerar IPA real, você precisa de um Provisioning Profile e Certificado
+          # Para um build de teste/simulador, usamos o comando de build direto
+          xcodebuild -exportArchive \
+            -archivePath $PWD/archives/RatoFileManager.xcarchive \
+            -exportOptionsPlist ExportOptions.plist \
+            -exportPath $PWD/build/
 
-      - name: Upload IPA Artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: RatoFileManager-IPA
-          path: build/*.ipa
+    - name: Upload IPA Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: RatoFileManager-IPA
+        path: build/RatoFileManager.ipa
 
-      - name: Cleanup
-        run: echo "Build process finished."
+      - name: Cleanup
+        run: echo "Build process finished."
