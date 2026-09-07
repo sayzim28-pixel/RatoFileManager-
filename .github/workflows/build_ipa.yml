@@ -18,8 +18,15 @@ jobs:
 
       - name: Build Project (Archive)
         run: |
+          PROJECT_PATH="$(find . -type d -name 'RatoFileManager.xcodeproj' -print -quit)"
+          if [ -z "$PROJECT_PATH" ]; then
+            echo "Erro: RatoFileManager.xcodeproj não foi encontrado no repositório baixado pelo Actions."
+            find . -maxdepth 4 -type d -print
+            exit 1
+          fi
+          echo "Projeto encontrado em: $PROJECT_PATH"
           xcodebuild archive \
-            -project RatoFileManager/RatoFileManager.xcodeproj \
+            -project "$PROJECT_PATH" \
             -scheme RatoFileManager \
             -configuration Release \
             -archivePath $PWD/archives/RatoFileManager.xcarchive \
