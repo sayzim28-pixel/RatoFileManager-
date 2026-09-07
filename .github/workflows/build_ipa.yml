@@ -2,20 +2,16 @@ name: Build iOS App (IPA)
 
 on:
   push:
-    branches: [ main ] # Dispara o build quando você faz push na main
-  workflow_dispatch: # Permite rodar manualmente
+    branches: [ main ]
+  workflow_dispatch:
 
 jobs:
   build:
-    runs-on: macos-latest # Usa um Mac virtual do GitHub
+    runs-on: macos-latest
 
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
-
-      - name: Install Dependencies
-        run: |
-          echo "Installing dependencies..."
 
       - name: Build Project (Archive)
         run: |
