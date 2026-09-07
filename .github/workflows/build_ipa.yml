@@ -19,7 +19,7 @@ jobs:
       - name: Build Project (Archive)
         run: |
           xcodebuild archive \
-            -project .github/RatoFileManager/RatoFileManager.xcodeproj \
+            -project RatoFileManager/RatoFileManager.xcodeproj \
             -scheme RatoFileManager \
             -configuration Release \
             -archivePath $PWD/archives/RatoFileManager.xcarchive \
